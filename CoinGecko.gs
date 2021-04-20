@@ -232,6 +232,86 @@ async function GECKOCAP(ticker,currency,diluted=false){
   }
 
 }
+/** GECKOPRICEBYNAMEAUTOMATA
+ * Update your documents with single request. (https://www.coingecko.com/en/coins/bitcoin/usd).
+ * For example:
+ *
+ *   GECKOPRICEBYNAMEAUTOMATA run with trigger function.
+ *               
+ *
+ **/
+ async function GECKOPRICEBYNAMEAUTOMATA(count=0){
+  
+  var values = SpreadsheetApp.getActiveSheet().getDataRange().getValues();
+  var cells = "";
+  var id = [];
+  var price = [];
+  /*özelleştirilebilir */
+  //kaçıncı satırdan okumaya başlıcak. 0dan başlar.
+  var baslangic = 2;
+  //kaçıncı sütunda idler yer alıyor. 0dan başlar.
+  var idrow = 1;
+  //değerleri kaçıncı sütuna yazılacak. 1den başlar.
+  var writerow = 3;
+  for(var n=baslangic;n<values.length;++n){
+  if (values[n][idrow] === "ID-X" || values[n][idrow] === "") {
+      //Logger.log("finished");
+      break;
+    }
+    cells += values[n][idrow] + "," ; // x is the index of the column starting from 0
+  }
+  cells = cells.slice(0, -1); 
+  //Logger.log("%s", cells);
+  id_coin=cells;
+  currency="usd";
+  
+  
+  try{
+    
+    url="https://api.coingecko.com/api/v3/simple/price?ids="+id_coin+"&vs_currencies=usd";
+    
+    var res = await UrlFetchApp.fetch(url);
+    var content = res.getContentText();
+    var parsedJSON = JSON.parse(content);
+    for(var key in parsedJSON)
+    {
+    id.push(key);
+    price.push(parsedJSON[key].usd);
+    }
+    //id.push(parsedJSON.data.id);
+    //price.push(parsedJSON.tron.usd);
+    //Logger.log(id);
+    //Logger.log(price);
+    
+    for(var n=baslangic;n<values.length;++n){
+      for(var i=0;i<id.length;i++){
+        if(values[n][idrow] == id[i]){
+          SpreadsheetApp.getActiveSheet().getRange(n+1,writerow).setValue(price[i]);
+          //Logger.log(price[i]);
+          //Logger.log(id[i]);
+          break;
+        }
+      }
+
+    if (values[n][idrow] === "ID-X" || values[n][idrow] === "") {
+      //Logger.log("finished");
+      break;
+    }
+    }
+  SpreadsheetApp.getActiveSheet().getRange('A1').setValue(Utilities.formatDate(new Date(), "GMT+3", "d/MM/yyyy HH:mm:ss"));
+    return "ok";
+  }
+  
+  catch(err){
+    Logger.log("error rety %s", err);
+    //3kere tekrar deneyelim
+    if(count < 3){
+      GECKOPRICEBYNAMEAUTOMATA(count+1)
+    }
+    //return GECKOPRICEBYNAMEAUTOMATA();
+  }
+
+}
 /** GECKOPRICEBYNAME
  * Imports CoinGecko's cryptocurrency prices into Google spreadsheets. The id_coin of cryptocurrency ticker is found in web address of Coingecko (https://www.coingecko.com/en/coins/bitcoin/usd).
  * For example:
