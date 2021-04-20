@@ -1,3 +1,6 @@
+EKBILGI: BU DÖKÜMANDAKİ BİLGİLERİN KULLANIMI VE DAHA FAZLASI İÇİN BLOGUMDA BULUNAN YAZIYI OKUYABİLİRSİNİZ:
+https://ozgurduyar.com.tr/excel-dokumaninda-kripto-paralari-canli-takip-etme/
+
 # COINGECKO
 CoinGecko Spreadsheet Feed: Prices, Volumes, Market Cap
 
